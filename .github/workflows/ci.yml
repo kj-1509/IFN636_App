@@ -2,11 +2,9 @@ name: CI
 
 on:
     push:
-        branches:
-            - main
+        branches: [main, develop]
     pull_request:
-        branches:
-            - main
+        branches: [main, develop]
 
 jobs:
     build:
@@ -24,5 +22,8 @@ jobs:
         - name: Install dependencies
             run: npm install
 
-        - name: Run tests
-            run: npm test
+        - name: Run backend tests
+            run: cd backend && npm test
+
+        - name: Run frontend tests
+            run: cd frontend && npm test
