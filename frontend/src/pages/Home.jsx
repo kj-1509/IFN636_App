@@ -22,7 +22,7 @@ const Home = () => {
   const filteredThreads = activeTopic === 'All' ? threads : threads.filter(t => t.topic === activeTopic);
 
   return (
-    <div className="page=layour">
+    <div className="page-layout">
       <aside className="sidebar">
         <button className="sidebar-item">Home</button>
         <button className="sidebar-item">Popular</button>
