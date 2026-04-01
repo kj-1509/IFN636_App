@@ -70,4 +70,13 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
-module.exports = { registerUser, loginUser, updateUserProfile, getProfile };
+const deleteUserProfile = async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.user.id);
+        res.json({ message: 'Account deleted' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = { registerUser, loginUser, updateUserProfile, getProfile, deleteUserProfile };
