@@ -4,17 +4,23 @@ import api from '../../axiosConfig';
 
 const AdminDashboard = () => {
   const [threads, setThreads] = useState([]);
-  const [users,   setUsers]   = useState([]);
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
+      setError('');
       try {
         const t = await api.get('/threads');
         const u = await api.get('/users');
-        setThreads(t.data);
-        setUsers(u.data);
+        setThreads(t.data || []);
+        setUsers(u.data || []);
       } catch (err) {
-        console.log(err.message);
+        setError(err?.response?.data?.message || err.message || 'Unable to load admin data');
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
@@ -38,7 +44,12 @@ const AdminDashboard = () => {
       <main className="admin-content">
         <h1 className="admin-title">Admin Dashboard</h1>
 
-        {/* KPI Cards */}
+        {isLoading && <p>Loading dashboard…</p>}
+        {!isLoading && error && <p className="error-message">{error}</p>}
+
+        {!isLoading && !error && (
+          <>
+            {/* KPI Cards */}
         <div className="kpi-grid">
           <div className="kpi-card" style={{ borderColor: '#008471' }}>
             <p className="kpi-label">Total Users</p>
@@ -106,7 +117,7 @@ const AdminDashboard = () => {
                   <div className="topic-bar-wrap">
                     <div
                       className="topic-bar"
-                      style={{ width: `${(count / threads.length) * 100}%` }}
+                      style={{ width: `${threads.length ? (count / threads.length) * 100 : 0}%` }}
                     />
                   </div>
                   <span className="admin-meta">{count}</span>
@@ -116,6 +127,8 @@ const AdminDashboard = () => {
           </div>
 
         </div>
+      </>
+    )}
       </main>
     </div>
   );

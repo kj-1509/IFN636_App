@@ -35,6 +35,10 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'JWT_SECRET not configured' });
+    }
+
     // Generate token
     const token = jwt.sign(
       { id: user._id, role: user.role },

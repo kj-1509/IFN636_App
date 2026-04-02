@@ -4,27 +4,44 @@ import AdminSidebar from '../../components/AdminSidebar';
 const DEFAULT_TOPICS = ['Tech','Culture','Science','Gaming','Sports','Other'];
 
 const AdminTopics = () => {
-  const [topics,    setTopics]    = useState(DEFAULT_TOPICS);
-  const [newTopic,  setNewTopic]  = useState('');
-  const [saved,     setSaved]     = useState(false);
+  const [topics, setTopics] = useState(DEFAULT_TOPICS);
+  const [newTopic, setNewTopic] = useState('');
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleAdd = () => {
-    if (!newTopic.trim()) return;
-    if (topics.includes(newTopic.trim())) {
-      alert('Topic already exists');
+    const candidate = newTopic.trim();
+    if (!candidate) {
+      setError('Please enter topic name');
       return;
     }
-    setTopics([...topics, newTopic.trim()]);
+    if (topics.includes(candidate)) {
+      setError('Topic already exists');
+      return;
+    }
+    setTopics((prev) => [...prev, candidate]);
     setNewTopic('');
+    setMessage(`Topic "${candidate}" added`);
+    setError('');
+    setTimeout(() => setMessage(''), 2500);
   };
 
   const handleDelete = (topic) => {
-    setTopics(topics.filter(t => t !== topic));
+    setTopics((prev) => prev.filter((t) => t !== topic));
+    setMessage(`Topic "${topic}" removed`);
+    setError('');
+    setTimeout(() => setMessage(''), 2500);
   };
 
   const handleSave = () => {
     setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setMessage('Topics saved');
+    setError('');
+    setTimeout(() => {
+      setSaved(false);
+      setMessage('');
+    }, 3000);
   };
 
   return (
@@ -32,6 +49,8 @@ const AdminTopics = () => {
       <AdminSidebar />
       <main className="admin-content">
         <h1 className="admin-title">Topics</h1>
+        {error && <p className="error-message">{error}</p>}
+        {message && <p className="success-message">{message}</p>}
 
         {/* Current topics */}
         <div className="admin-block" style={{ marginBottom: '24px' }}>

@@ -24,6 +24,8 @@ const getThread = async (req, res) => {
     try {
         const thread = await Thread.findById(req.params.id).populate('author', 'name').populate('comments.author', 'name');
         if (!thread) return res.status(404).json({ error: 'Thread not found' });
+
+        return res.json(thread);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

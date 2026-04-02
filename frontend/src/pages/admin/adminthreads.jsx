@@ -5,20 +5,41 @@ import api from '../../axiosConfig';
 const TOPICS = ['All','Tech','Culture','Science','Gaming','Sports','Other'];
 
 const AdminThreads = () => {
-  const [threads,     setThreads]     = useState([]);
+  const [threads, setThreads] = useState([]);
   const [activeTopic, setActiveTopic] = useState('All');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+  const [deletingIds, setDeletingIds] = useState([]);
 
   const fetchThreads = async () => {
-    const res = await api.get('/threads');
-    setThreads(res.data);
+    setIsLoading(true);
+    setError('');
+    try {
+      const res = await api.get('/threads');
+      setThreads(res.data || []);
+    } catch (err) {
+      setError(err?.response?.data?.message || err.message || 'Failed to load threads');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => { fetchThreads(); }, []);
 
   const handleDelete = async (id) => {
-    if (window.confirm('Delete this thread?')) {
+    if (!window.confirm('Delete this thread?')) return;
+
+    try {
+      setDeletingIds((prev) => [...prev, id]);
       await api.delete(`/threads/${id}`);
+      setMessage('Thread deleted successfully');
       fetchThreads();
+    } catch (err) {
+      setError(err?.response?.data?.message || err.message || 'Could not delete thread');
+    } finally {
+      setDeletingIds((prev) => prev.filter((threadId) => threadId !== id));
+      setTimeout(() => setMessage(''), 3000);
     }
   };
 
@@ -32,7 +53,13 @@ const AdminThreads = () => {
       <main className="admin-content">
         <h1 className="admin-title">Threads</h1>
 
-        {/* Topic filter */}
+        {isLoading && <p>Loading threads…</p>}
+        {error && <p className="error-message">{error}</p>}
+        {message && <p className="success-message">{message}</p>}
+
+        {!isLoading && (
+          <>
+            {/* Topic filter */}
         <div className="topic-pills" style={{ marginBottom: '16px' }}>
           {TOPICS.map(topic => (
             <button
@@ -61,20 +88,23 @@ const AdminThreads = () => {
                 <span>{t.title}</span>
                 <span>{t.author?.name}</span>
                 <span>{t.topic}</span>
-                <span>👍 {t.likes}</span>
-                <span>💬 {t.comments.length}</span>
+                <span>👍 {t.likes || 0}</span>
+                <span>💬 {(t.comments || []).length}</span>
                 <span className="admin-actions">
                   <button
                     className="btn-admin-delete"
+                    disabled={deletingIds.includes(t._id)}
                     onClick={() => handleDelete(t._id)}
                   >
-                    🗑 Delete
+                    {deletingIds.includes(t._id) ? 'Deleting...' : '🗑 Delete'}
                   </button>
                 </span>
               </div>
             ))
           }
         </div>
+      </>
+    )}
       </main>
     </div>
   );
