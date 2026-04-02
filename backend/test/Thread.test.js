@@ -16,16 +16,12 @@ describe('Thread Controller', () => {
     sinon.restore();
   });
 
-  // Create
+  // ── CREATE ───────────────────────────────────────────
   describe('createThread', () => {
 
     it('should create a thread successfully', async () => {
       const req = {
-        body: {
-          title:   'Test Thread',
-          content: 'Test content',
-          topic:   'Tech',
-        },
+        body: { title: 'Test Thread', content: 'Test content', topic: 'Tech' },
         user: { id: 'user123' }
       };
       const res = {
@@ -34,11 +30,8 @@ describe('Thread Controller', () => {
       };
 
       sinon.stub(Thread, 'create').resolves({
-        _id:     'thread123',
-        title:   'Test Thread',
-        content: 'Test content',
-        topic:   'Tech',
-        author:  'user123',
+        _id: 'thread123', title: 'Test Thread', content: 'Test content',
+        topic: 'Tech', author: 'user123',
       });
 
       await createThread(req, res);
@@ -49,7 +42,7 @@ describe('Thread Controller', () => {
 
   });
 
-  // Read all
+  // ── READ ALL ─────────────────────────────────────────
   describe('getThreads', () => {
 
     it('should return all threads', async () => {
@@ -59,13 +52,9 @@ describe('Thread Controller', () => {
         json:   sinon.stub(),
       };
 
-      sinon.stub(Thread, 'find').returns({
-        populate: sinon.stub().returnsThis(),
-        sort:     sinon.stub().resolves([
-          { title: 'Thread 1', topic: 'Tech' },
-          { title: 'Thread 2', topic: 'Gaming' },
-        ]),
-      });
+      const sortStub    = sinon.stub().resolves([]);
+      const populateStub = sinon.stub().returns({ sort: sortStub });
+      sinon.stub(Thread, 'find').returns({ populate: populateStub });
 
       await getThreads(req, res);
 
@@ -74,57 +63,78 @@ describe('Thread Controller', () => {
 
   });
 
-  // Read one
+  // ── READ ONE ─────────────────────────────────────────
   describe('getThread', () => {
 
     it('should return 404 if thread not found', async () => {
-  const req = { params: { id: 'nonexistent123' } };
-  const res = {
-    status: sinon.stub().returnsThis(),
-    json:   sinon.stub(),
-  };
+      const req = { params: { id: 'nonexistent123' } };
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json:   sinon.stub(),
+      };
 
-  sinon.stub(Thread, 'findById').returns({
-    populate: sinon.stub().returns({
-      populate: sinon.stub().resolves(null),
-    }),
+      const secondPopulate = sinon.stub().resolves(null);
+      const firstPopulate  = sinon.stub().returns({ populate: secondPopulate });
+      sinon.stub(Thread, 'findById').returns({ populate: firstPopulate });
+
+      await getThread(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ message: 'Thread not found' })).to.be.true;
+    });
+
   });
 
-  await getThread(req, res);
-
-  expect(res.status.calledWith(404)).to.be.true;
-  expect(res.json.calledWith({ message: 'Thread not found' })).to.be.true;  
-});
-
-});
-
-  // Update
+  // ── UPDATE ───────────────────────────────────────────
   describe('updateThread', () => {
 
     it('should return 403 if user is not the author', async () => {
-  const req = {
-    params: { id: 'thread123' },
-    body:   { title: 'Updated title' },
-    user:   { id: 'differentUser' },
-  };
-  const res = {
-    status: sinon.stub().returnsThis(),
-    json:   sinon.stub(),
-  };
+      const req = {
+        params: { id: 'thread123' },
+        body:   { title: 'Updated title' },
+        user:   { id: 'differentUser' },
+      };
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json:   sinon.stub(),
+      };
 
-  sinon.stub(Thread, 'findById').resolves({
-    _id:    'thread123',
-    author: { toString: () => 'originalUser' },
-    title:  'Old title',
+      sinon.stub(Thread, 'findById').resolves({
+        _id:     'thread123',
+        title:   'Old title',
+        content: 'Old content',
+        topic:   'Tech',
+        author:  { toString: () => 'originalUser' },
+      });
+
+      await updateThread(req, res);
+
+      expect(res.status.calledWith(403)).to.be.true;
+      expect(res.json.calledWith({ message: 'Not authorised' })).to.be.true;
+    });
+
+    it('should return 404 if thread not found', async () => {
+      const req = {
+        params: { id: 'nonexistent' },
+        body:   { title: 'Updated title' },
+        user:   { id: 'user123' },
+      };
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json:   sinon.stub(),
+      };
+
+      sinon.stub(Thread, 'findById').resolves(null);
+
+      await updateThread(req, res);
+
+      expect(res.status.calledWith(404)).to.be.true;
+      expect(res.json.calledWith({ message: 'Thread not found' })).to.be.true;
+    });
+
   });
 
-  await updateThread(req, res);
-
-  expect(res.status.calledWith(403)).to.be.true;
-  expect(res.json.calledWith({ message: 'Not authorised' })).to.be.true;
-});
-
-  // Delete
+  // ── DELETE ───────────────────────────────────────────
   describe('deleteThread', () => {
 
     it('should return 404 if thread not found', async () => {
@@ -145,7 +155,28 @@ describe('Thread Controller', () => {
       expect(res.json.calledWith({ message: 'Thread not found' })).to.be.true;
     });
 
+    it('should return 403 if user is not the author', async () => {
+      const req = {
+        params: { id: 'thread123' },
+        user:   { id: 'differentUser', role: 'user' },
+      };
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json:   sinon.stub(),
+      };
+
+      sinon.stub(Thread, 'findById').resolves({
+        _id:      'thread123',
+        author:   { toString: () => 'originalUser' },
+        deleteOne: sinon.stub().resolves(),
+      });
+
+      await deleteThread(req, res);
+
+      expect(res.status.calledWith(403)).to.be.true;
+      expect(res.json.calledWith({ message: 'Not authorised' })).to.be.true;
+    });
+
   });
 
-});
 });
