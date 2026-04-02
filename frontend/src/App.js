@@ -5,10 +5,10 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import AdminUsers from './pages/admin/AdminUsers';
-import AdminThreads from './pages/admin/AdminThreads';
-import AdminTopics from './pages/admin/AdminTopics';
+import AdminDashboard from './pages/admin/admindashboard';
+import AdminUsers from './pages/admin/adminusers';
+import AdminThreads from './pages/admin/adminthreads';
+import AdminTopics from './pages/admin/admintopics';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 
