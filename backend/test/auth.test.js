@@ -1,6 +1,7 @@
 const chai    = require('chai');
 const sinon   = require('sinon');
 const User    = require('../models/User');
+const bcrypt  = require('bcryptjs');
 const { register, login } = require('../controllers/authController');
 const { expect } = chai;
 
@@ -26,6 +27,7 @@ describe('Auth Controller', () => {
       };
 
       sinon.stub(User, 'findOne').resolves(null);
+      sinon.stub(bcrypt, 'hash').resolves('hashedpassword');
       sinon.stub(User, 'create').resolves({
         name:  'Test User',
         email: 'test@buzz.com',
@@ -60,7 +62,6 @@ describe('Auth Controller', () => {
 
   });
 
-  
   describe('login', () => {
 
     it('should return 400 if user not found', async () => {
