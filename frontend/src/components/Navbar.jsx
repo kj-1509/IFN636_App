@@ -11,29 +11,29 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-blue-600 text-white p-4 flex justify-between items-center">
-      <Link to="/" className="text-2xl font-bold">Your apps name</Link>
-      <div>
+    <nav className='navbar'>
+      <div className='navbar-logo'>
+        <div className='logo-dots'>
+          <span style={{ background: '#F4D242'}}> </span>
+          <span style={{ background: '#F29CC3'}}></span>
+          <span style={{background:'#80B0E8'}}></span>
+        </div>
+        <Link to="/" className='logo-text'>Buzz</Link>
+      </div>
+      <div className='navbar-search'>
+        <input type="text" placeholder='Search'/>
+      </div>
+      <div className='navbar-actions'>
         {user ? (
           <>
-            <Link to="/tasks" className="mr-4">CRUD</Link>
-            <Link to="/profile" className="mr-4">Profile</Link>
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 px-4 py-2 rounded hover:bg-red-700"
-            >
-              Logout
-            </button>
+            <span className='nav-username'>{user.name}</span>
+            <Link to='/profile' className='btn-outline'>Profile</Link>
+            <button className='btn-logout' onClick={handleLogout}>Log out</button>
           </>
         ) : (
           <>
-            <Link to="/login" className="mr-4">Login</Link>
-            <Link
-              to="/register"
-              className="bg-green-500 px-4 py-2 rounded hover:bg-green-700"
-            >
-              Register
-            </Link>
+            <Link to='/login' className='btn-outline'>Log In</Link>
+            <Link to='/register' className='btn-primary'>Sign Up</Link>
           </>
         )}
       </div>
