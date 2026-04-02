@@ -2,7 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
+      - feature/frontend
+      - feature/backend
+      - feature/forum-posts
+      - feature/ci-cd
   pull_request:
     branches: [ main, develop ]
 
