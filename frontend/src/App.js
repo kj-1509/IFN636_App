@@ -18,12 +18,12 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-          {/* User routes */}
+          
           <Route path="/"              element={<Home />} />
           <Route path="/login"         element={<Login />} />
           <Route path="/register"      element={<Register />} />
           <Route path="/profile"       element={<Profile />} />
-          {/* Admin routes */}
+          
           <Route path="/admin"         element={<AdminDashboard />} />
           <Route path="/admin/users"   element={<AdminUsers />} />
           <Route path="/admin/threads" element={<AdminThreads />} />
