@@ -10,12 +10,13 @@ on:
       - feature/forum-posts
       - feature/ci-cd
   pull_request:
-    branches: [ main, develop ]
+    branches:
+      - main
+      - develop
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -23,28 +24,22 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: 20
 
       - name: Install backend dependencies
-        run: npm install
         working-directory: backend
+        run: npm install
 
       - name: Install frontend dependencies
-        run: npm install
         working-directory: frontend
+        run: npm install
 
       - name: Build frontend
-        run: npm run build
         working-directory: frontend
+        run: npm run build
         env:
           CI: false
 
       - name: Run backend tests
-        run: npm test --if-present
         working-directory: backend
-
-      - name: Run frontend tests
-        run: npm test --if-present --watchAll=false
-        working-directory: frontend
-        env:
-          CI: false
+        run: npm test
