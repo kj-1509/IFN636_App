@@ -1,7 +1,6 @@
-const chai     = require('chai');
-const sinon    = require('sinon');
-const mongoose = require('mongoose');
-const Thread   = require('../models/Thread');
+const chai    = require('chai');
+const sinon   = require('sinon');
+const Thread  = require('../models/Thread');
 const {
   createThread,
   getThreads,
@@ -13,17 +12,21 @@ const { expect } = chai;
 
 describe('Thread Controller', () => {
 
-  
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  // Create
   describe('createThread', () => {
 
-    it('thread created', async () => {
+    it('should create a thread successfully', async () => {
       const req = {
         body: {
-          title:   'Test Title',
+          title:   'Test Thread',
           content: 'Test content',
           topic:   'Tech',
         },
-        user: { id: 'KelseyTest' }
+        user: { id: 'user123' }
       };
       const res = {
         status: sinon.stub().returnsThis(),
@@ -32,26 +35,24 @@ describe('Thread Controller', () => {
 
       sinon.stub(Thread, 'create').resolves({
         _id:     'thread123',
-        title:   'Test Title',
+        title:   'Test Thread',
         content: 'Test content',
         topic:   'Tech',
-        author:  'KelseyTest',
+        author:  'user123',
       });
 
       await createThread(req, res);
 
       expect(res.status.calledWith(201)).to.be.true;
       expect(res.json.calledOnce).to.be.true;
-
-      Thread.create.restore();
     });
 
   });
 
-  
+  // Read all
   describe('getThreads', () => {
 
-    it('sreturn all threads', async () => {
+    it('should return all threads', async () => {
       const req = {};
       const res = {
         status: sinon.stub().returnsThis(),
@@ -69,41 +70,39 @@ describe('Thread Controller', () => {
       await getThreads(req, res);
 
       expect(res.json.calledOnce).to.be.true;
-
-      Thread.find.restore();
     });
 
   });
 
-  
+  // Read one
   describe('getThread', () => {
 
-    it('404 thread not found', async () => {
+    it('should return 404 if thread not found', async () => {
       const req = { params: { id: 'nonexistent123' } };
       const res = {
         status: sinon.stub().returnsThis(),
         json:   sinon.stub(),
       };
 
+      const populateStub = sinon.stub().resolves(null);
       sinon.stub(Thread, 'findById').returns({
-        populate: sinon.stub().returnsThis(),
-        populate: sinon.stub().resolves(null),
+        populate: sinon.stub().returns({
+          populate: populateStub,
+        }),
       });
 
       await getThread(req, res);
 
       expect(res.status.calledWith(404)).to.be.true;
       expect(res.json.calledWith({ message: 'Thread not found' })).to.be.true;
-
-      Thread.findById.restore();
     });
 
   });
 
-  
+  // Update
   describe('updateThread', () => {
 
-    it('403 user is not the author', async () => {
+    it('should return 403 if user is not the author', async () => {
       const req = {
         params: { id: 'thread123' },
         body:   { title: 'Updated title' },
@@ -122,17 +121,15 @@ describe('Thread Controller', () => {
       await updateThread(req, res);
 
       expect(res.status.calledWith(403)).to.be.true;
-      expect(res.json.calledWith({ message: 'unauthorised' })).to.be.true;
-
-      Thread.findById.restore();
+      expect(res.json.calledWith({ message: 'Not authorised' })).to.be.true;
     });
 
   });
 
-  
+  // Delete
   describe('deleteThread', () => {
 
-    it('404 thread not found', async () => {
+    it('should return 404 if thread not found', async () => {
       const req = {
         params: { id: 'nonexistent123' },
         user:   { id: 'user123', role: 'user' },
@@ -148,8 +145,6 @@ describe('Thread Controller', () => {
 
       expect(res.status.calledWith(404)).to.be.true;
       expect(res.json.calledWith({ message: 'Thread not found' })).to.be.true;
-
-      Thread.findById.restore();
     });
 
   });
