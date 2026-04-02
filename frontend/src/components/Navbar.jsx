@@ -25,17 +25,20 @@ const Navbar = () => {
       </div>
       <div className='navbar-actions'>
         {user ? (
-          <>
-            <span className='nav-username'>{user.name}</span>
-            <Link to='/profile' className='btn-outline'>Profile</Link>
-            <button className='btn-logout' onClick={handleLogout}>Log out</button>
-          </>
-        ) : (
-          <>
-            <Link to='/login' className='btn-outline'>Log In</Link>
-            <Link to='/register' className='btn-primary'>Sign Up</Link>
-          </>
-        )}
+  <>
+    <span className="nav-username">👤 {user.name}</span>
+    {user.role === 'admin' && (
+      <Link to="/admin" className="btn-admin">Admin</Link>
+    )}
+    <Link to="/profile" className="btn-outline">Profile</Link>
+    <button className="btn-logout" onClick={handleLogout}>Log Out</button>
+  </>
+) : (
+  <>
+    <Link to="/login"    className="btn-outline">Log In</Link>
+    <Link to="/register" className="btn-primary">Sign Up</Link>
+  </>
+)}
       </div>
     </nav>
   );
