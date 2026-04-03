@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 
-// ── REGISTER ──────────────────────────────────────────────
+
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
   try {
@@ -19,17 +19,17 @@ const registerUser = async (req, res) => {
   }
 };
 
-// ── LOGIN ─────────────────────────────────────────────────
+
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Find user
+    
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
-    // Compare plain text password directly
+    
     if (password !== user.password) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
@@ -38,7 +38,7 @@ const loginUser = async (req, res) => {
       return res.status(500).json({ message: 'JWT_SECRET not configured' });
     }
 
-    // Generate token
+    
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET,

@@ -11,7 +11,7 @@ const AdminSidebar = () => {
 
   return (
     <aside className="admin-sidebar">
-      {/* Admin user */}
+      
       <div className="admin-user">
         <div className="profile-avatar">
           {user?.name?.charAt(0).toUpperCase()}
@@ -19,27 +19,27 @@ const AdminSidebar = () => {
         <span>{user?.name}</span>
       </div>
 
-      {/* Navigation */}
+      
       <nav className="admin-nav">
         <p className="sidebar-label">OVERVIEW</p>
         <Link to="/admin"         className={isActive('/admin')}>
-          📊 Dashboard
+          Dashboard
         </Link>
 
         <p className="sidebar-label">COMMUNITY</p>
         <Link to="/admin/users"   className={isActive('/admin/users')}>
-          👥 Users
+          Users
         </Link>
         <Link to="/admin/threads" className={isActive('/admin/threads')}>
-          💬 Threads
+          Threads
         </Link>
         <Link to="/admin/topics"  className={isActive('/admin/topics')}>
-          🏷 Topics
+          Topics
         </Link>
 
         <p className="sidebar-label">SYSTEM</p>
         <Link to="/" className="admin-nav-item">
-          🏠 Back to Forum
+          Back to Forum
         </Link>
       </nav>
     </aside>

@@ -52,7 +52,7 @@ const AdminTopics = () => {
         {error && <p className="error-message">{error}</p>}
         {message && <p className="success-message">{message}</p>}
 
-        {/* Current topics */}
+        
         <div className="admin-block" style={{ marginBottom: '24px' }}>
           <h3>All Topics</h3>
           <div className="topic-pills" style={{ marginTop: '12px' }}>
@@ -70,7 +70,7 @@ const AdminTopics = () => {
           </div>
         </div>
 
-        {/* Add new topic */}
+        
         <div className="admin-block">
           <h3>Add New Topic</h3>
           <div className="add-topic-row">
@@ -86,7 +86,7 @@ const AdminTopics = () => {
           </div>
         </div>
 
-        {/* Save */}
+        
         <div className="form-actions" style={{ marginTop: '24px' }}>
           <button className="btn-primary" onClick={handleSave}>
             Save Changes

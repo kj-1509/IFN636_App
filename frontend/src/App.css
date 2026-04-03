@@ -626,7 +626,7 @@ body {
   color: #008471;
   font-weight: 600;
 }
-/* ── ADMIN ───────────────────────────────────────────── */
+
 .admin-layout {
   display: grid;
   grid-template-columns: 200px 1fr;
@@ -690,7 +690,7 @@ body {
   margin-bottom: 24px;
 }
 
-/* KPI Cards */
+
 .kpi-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -720,7 +720,7 @@ body {
   color: #1a1a1a;
 }
 
-/* Admin Row */
+
 .admin-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -769,7 +769,7 @@ body {
   color: #aaa;
 }
 
-/* Topic bar */
+
 .topic-bar-wrap {
   flex: 1;
   height: 6px;
@@ -784,7 +784,7 @@ body {
   border-radius: 3px;
 }
 
-/* Admin Table */
+
 .admin-table {
   background: white;
   border-radius: 12px;
@@ -860,7 +860,7 @@ body {
   color: #888;
 }
 
-/* Topic pills admin */
+
 .topic-pill-admin {
   display: flex;
   align-items: center;

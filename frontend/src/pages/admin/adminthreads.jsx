@@ -59,7 +59,7 @@ const AdminThreads = () => {
 
         {!isLoading && (
           <>
-            {/* Topic filter */}
+            
         <div className="topic-pills" style={{ marginBottom: '16px' }}>
           {TOPICS.map(topic => (
             <button
@@ -88,15 +88,15 @@ const AdminThreads = () => {
                 <span>{t.title}</span>
                 <span>{t.author?.name}</span>
                 <span>{t.topic}</span>
-                <span>👍 {t.likes || 0}</span>
-                <span>💬 {(t.comments || []).length}</span>
+                <span>0</span>
+                <span>0</span>
                 <span className="admin-actions">
                   <button
                     className="btn-admin-delete"
                     disabled={deletingIds.includes(t._id)}
                     onClick={() => handleDelete(t._id)}
                   >
-                    {deletingIds.includes(t._id) ? 'Deleting...' : '🗑 Delete'}
+                    {deletingIds.includes(t._id) ? 'Deleting...' : 'Delete'}
                   </button>
                 </span>
               </div>
