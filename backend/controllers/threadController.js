@@ -1,5 +1,5 @@
 const Thread = require('../models/Thread');
-// Create thread //
+
 const createThread = async (req, res) => {
     const { title, content, topic } = req.body;
     try {
@@ -9,7 +9,7 @@ const createThread = async (req, res) => {
         res.status(400).json({ error: error.message });
      }
 };
-// Get all threads //
+
 const getThreads = async (req, res) => {
     try {
         const threads = await Thread.find().populate('author', 'name') .sort({ createdAt: -1 });
@@ -19,17 +19,19 @@ const getThreads = async (req, res) => {
     }
 };
 
-// Get 1 thread //
+
 const getThread = async (req, res) => {
     try {
         const thread = await Thread.findById(req.params.id).populate('author', 'name').populate('comments.author', 'name');
         if (!thread) return res.status(404).json({ error: 'Thread not found' });
+
+        return res.json(thread);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-// Update thread //
+
 const updateThread = async (req, res) => {
     const { title, content, topic } = req.body;
     try {
@@ -49,7 +51,7 @@ const updateThread = async (req, res) => {
     }
 };
 
-// Delete thread //
+
 const deleteThread = async (req, res) => {
     try {
         const thread = await Thread.findById(req.params.id);

@@ -3,53 +3,65 @@ import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
 
 const Profile = () => {
-  const { user } = useAuth(); // Access user token from context
+  const { user, updateUser } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    university: '',
-    address: '',
+    name: user?.name || '',
+    email: user?.email || '',
+    bio: user?.bio || '',
+    location: user?.location || '',
   });
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // Fetch profile data from the backend
+    if (!user) return;
+
     const fetchProfile = async () => {
       setLoading(true);
+      setError('');
       try {
-        const response = await axiosInstance.get('/api/auth/profile', {
-          headers: { Authorization: `Bearer ${user.token}` },
-        });
+        const response = await axiosInstance.get('/api/auth/profile');
         setFormData({
-          name: response.data.name,
-          email: response.data.email,
-          university: response.data.university || '',
-          address: response.data.address || '',
+          name: response.data.name || '',
+          email: response.data.email || '',
+          bio: response.data.bio || '',
+          location: response.data.location || '',
         });
-      } catch (error) {
-        alert('Failed to fetch profile. Please try again.');
+      } catch (err) {
+        setError(err?.response?.data?.message || 'Failed to fetch profile. Please try again.');
       } finally {
         setLoading(false);
       }
     };
 
-    if (user) fetchProfile();
+    fetchProfile();
   }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setError('');
     try {
-      await axiosInstance.put('/api/auth/profile', formData, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      alert('Profile updated successfully!');
-    } catch (error) {
-      alert('Failed to update profile. Please try again.');
+      const response = await axiosInstance.put('/api/auth/profile', formData);
+      setMessage('Profile updated successfully!');
+      if (updateUser) updateUser(response.data);
+      setTimeout(() => setMessage(''), 3000);
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to update profile. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+  if (!user) {
+    return (
+      <div className="text-center mt-20">
+        <p>Please log in to view and edit your profile.</p>
+        <a href="/login" className="text-blue-500 underline">Go to Login</a>
+      </div>
+    );
+  }
 
   if (loading) {
     return <div className="text-center mt-20">Loading...</div>;
@@ -59,6 +71,8 @@ const Profile = () => {
     <div className="max-w-md mx-auto mt-20">
       <form onSubmit={handleSubmit} className="bg-white p-6 shadow-md rounded">
         <h1 className="text-2xl font-bold mb-4 text-center">Your Profile</h1>
+        {error && <p className="text-red-600 mb-3">{error}</p>}
+        {message && <p className="text-green-600 mb-3">{message}</p>}
         <input
           type="text"
           placeholder="Name"
@@ -73,18 +87,17 @@ const Profile = () => {
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
-        <input
-          type="text"
-          placeholder="University"
-          value={formData.university}
-          onChange={(e) => setFormData({ ...formData, university: e.target.value })}
-          className="w-full mb-4 p-2 border rounded"
+        <textarea
+          placeholder="Bio"
+          value={formData.bio}
+          onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+          className="w-full mb-4 p-2 border rounded h-24"
         />
         <input
           type="text"
-          placeholder="Address"
-          value={formData.address}
-          onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+          placeholder="Location"
+          value={formData.location}
+          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
           className="w-full mb-4 p-2 border rounded"
         />
         <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded">

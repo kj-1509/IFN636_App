@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Thread = require('../models/Thread');
-// Get all users (admin only) //
+
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find().select('-password');
@@ -9,7 +9,7 @@ const getAllUsers = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-// Delete user (admin only) //
+
 const deleteUser = async (req, res) => {
     try {
         await Thread.deleteMany({ author: req.params.id });

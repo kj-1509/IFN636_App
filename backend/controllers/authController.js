@@ -1,82 +1,114 @@
-
-const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
+const User = require('../models/User');
 
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
-};
+
 
 const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
-    try {
-        const userExists = await User.findOne({ email });
-        if (userExists) return res.status(400).json({ message: 'User already exists' });
-
-        const user = await User.create({ name, email, password });
-        res.status(201).json({ id: user.id, name: user.name, email: user.email, token: generateToken(user.id) });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  const { name, email, password } = req.body;
+  try {
+    const exists = await User.findOne({ email });
+    if (exists) {
+      return res.status(400).json({ message: 'Email already registered' });
     }
+
+    const user = await User.create({ name, email, password });
+
+    res.status(201).json({ message: 'Account created successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
+
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-    try {
-        const user = await User.findOne({ email });
-        if (user && (await bcrypt.compare(password, user.password))) {
-            res.json({ id: user.id, name: user.name, email: user.email, token: generateToken(user.id) });
-        } else {
-            res.status(401).json({ message: 'Invalid email or password' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  const { email, password } = req.body;
+  try {
+    
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
     }
+
+    
+    if (password !== user.password) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      return res.status(500).json({ message: 'JWT_SECRET not configured' });
+    }
+
+    
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        bio: user.bio,
+        location: user.location,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
 const getProfile = async (req, res) => {
-    try {
-      const user = await User.findById(req.user.id);
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      res.status(200).json({
-        name: user.name,
-        email: user.email,
-        university: user.university,
-        address: user.address,
-      });
-    } catch (error) {
-      res.status(500).json({ message: 'Server error', error: error.message });
-    }
-  };
+  if (!req.user) {
+    return res.status(401).json({ message: 'Not authorized' });
+  }
 
-const updateUserProfile = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id);
-        if (!user) return res.status(404).json({ message: 'User not found' });
-
-        const { name, email, university, address } = req.body;
-        user.name = name || user.name;
-        user.email = email || user.email;
-        user.university = university || user.university;
-        user.address = address || user.address;
-
-        const updatedUser = await user.save();
-        res.json({ id: updatedUser.id, name: updatedUser.name, email: updatedUser.email, university: updatedUser.university, address: updatedUser.address, token: generateToken(updatedUser.id) });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  res.json({
+    _id: req.user._id,
+    name: req.user.name,
+    email: req.user.email,
+    role: req.user.role,
+    bio: req.user.bio || '',
+    location: req.user.location || '',
+  });
 };
 
-const deleteUserProfile = async (req, res) => {
-    try {
-        await User.findByIdAndDelete(req.user.id);
-        res.json({ message: 'Account deleted' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+const updateProfile = async (req, res) => {
+  const { name, email, bio, location, password } = req.body;
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (email && email !== user.email) {
+      const exists = await User.findOne({ email });
+      if (exists) return res.status(400).json({ message: 'Email already in use' });
+      user.email = email;
     }
+
+    user.name = name || user.name;
+    user.bio = bio !== undefined ? bio : user.bio;
+    user.location = location !== undefined ? location : user.location;
+
+    if (password) {
+      user.password = password;
+    }
+
+    const updated = await user.save();
+
+    res.json({
+      _id: updated._id,
+      name: updated.name,
+      email: updated.email,
+      role: updated.role,
+      bio: updated.bio,
+      location: updated.location,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
-module.exports = { registerUser, loginUser, updateUserProfile, getProfile, deleteUserProfile };
+module.exports = { registerUser, loginUser, getProfile, updateProfile };
