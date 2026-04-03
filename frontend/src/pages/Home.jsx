@@ -14,7 +14,7 @@ const Home = () => {
 
   const fetchThreads = async () => {
   try {
-    const res = await api.get('/api/threads');
+    const res = await axiosInstance.get('/api/threads');
     const data = Array.isArray(res.data) ? res.data : [];
     setThreads(data);
   } catch (err) {
@@ -73,9 +73,9 @@ const Home = () => {
       {showForm && (
         <ThreadForm onCreated={() => {setShowForm(false); fetchThreads();}} />
       )}
-          {filteredThreads.length === 0
+          {filtered.length === 0
             ? <p className="empty"> No posts available.</p>
-            : filteredThreads.map(thread => (
+            : filtered.map(thread => (
                 <ThreadCard key={thread._id} thread={thread} onRefresh={fetchThreads} />
               ))}
           </main>
