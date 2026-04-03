@@ -1,24 +1,80 @@
+# Buzz — Community Discussion Forum
 
-**Assessment 1.2 (Total Marks **20**)**
+Kelsey Jackson N12221589
 
-Assignment: **Software requirements analysis and design (**Full-Stack CRUD Application Development with DevOps Practices**)**
 
+---
+
+## Tech Stack
+- **Frontend:** React.js, Axios, React Router
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB, Mongoose
+- **CI/CD:** GitHub Actions
 
 ---
 
-**Objective**
+## Getting Started
 
-For this assessment, you have already been assigned a project. Your task is to develop a system that implements CRUD (Create, Read, Update, Delete) operations based on the selected project. The system should include both a user panel and an admin panel. Depending on the nature of your chosen project, you may decide how many CRUD operations are required to support the functionality of the system. You have been provided with a starter project that includes user authentication using Node.js, React.js, and MongoDB, your should extend this application based on your assigned project requirements. Ensure that the implemented features are appropriate and meaningful for your selected project. Your project should include the following:
-In this assignment you will complete the following tasks:
 
-* **Basic Version Control using GitHub**
-* **Development, CI/CD Integration for Automated Deployment**
-* **Project report**
+### 1. Set up backend
+```bash
+cd backend
+npm install
+```
 
- 
+Create a `.env` file:
+```bash
+MONGO_URI=mongodb+srv://user_1:Admin123@cluster0.hwnjxku.mongodb.net/Assignment?retryWrites=true&w=majority&appName=Cluster0 
+JWT_SECRET=2J8zqkP7VN6bxzg+Wy7DQZCA3Yx8mF3Bl0kch6HYtFs=
+PORT=5001
+```
+
+### 2. Set up frontend
+```bash
+cd frontend
+npm install
+```
+
 ---
 
-**GitHub link of the starter project: **[https://github.com/nahaQUT/sampleapp_IFQ636.git](https://github.com/nahaQUT/sampleapp_IFQ636.git)
+## Running the App
+
+**Terminal 1 — Backend:**
+```bash
+cd backend
+npm run dev
+```
+
+**Terminal 2 — Frontend:**
+```bash
+cd frontend
+npm start
+```
+
+- Frontend: http://localhost:3000
+- Backend: http://localhost:5001
 
 ---
-#CI Test
+
+## Running Tests
+```bash
+cd backend
+npm test
+```
+
+---
+
+## Features
+- User registration and login
+- Create, read, update and delete threads
+- User profile management
+- Admin dashboard — manage users, threads and topics
+
+## Users
+Admin
+email: admin@email.com
+password: Admin1234
+
+User -
+email: teste@email.com
+password: Password123
