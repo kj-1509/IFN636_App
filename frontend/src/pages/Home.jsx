@@ -13,13 +13,22 @@ const Home = () => {
   const { user } = useAuth();
 
   const fetchThreads = async () => {
-    const res = await axiosInstance.get('/api/threads');
-    setThreads(res.data);
-  };
+  try {
+    const res = await api.get('/api/threads');
+    const data = Array.isArray(res.data) ? res.data : [];
+    setThreads(data);
+  } catch (err) {
+    console.log(err.message);
+    setThreads([]);
+  }
+};
+
 
   useEffect(() => { fetchThreads(); }, []);
   
-  const filteredThreads = activeTopic === 'All' ? threads : threads.filter(t => t.topic === activeTopic);
+  const filtered = Array.isArray(threads)
+  ? (activeTopic === 'All' ? threads : threads.filter(t => t.topic === activeTopic))
+  : [];
 
   return (
     <div className="page-layout">
