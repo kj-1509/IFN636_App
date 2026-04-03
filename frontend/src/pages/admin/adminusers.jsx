@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
-import api from '../../axiosConfig';
+import axioInstance from '../../axiosConfig';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
 
   const fetchUsers = async () => {
   try {
-    console.log('Fetching from:', api.defaults.baseURL + '/users');
-    const res = await api.get('/users');
+    console.log('Fetching from:', axioInstance.defaults.baseURL + '/api/users');
+    const res = await axioInstance.get('/api/users');
     console.log('Users data:', res.data);
     setUsers(res.data || []);
   } catch (err) {
@@ -20,7 +20,7 @@ const AdminUsers = () => {
 
   const handleDelete = async (id) => {
     if (window.confirm('Delete this user?')) {
-      await api.delete(`/users/${id}`);
+      await axioInstance.delete(`/api/users/${id}`);
       fetchUsers();
     }
   };

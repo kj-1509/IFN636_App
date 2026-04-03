@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
-import api from '../../axiosConfig';
+import axioInstance from '../../axiosConfig';
 
 const AdminDashboard = () => {
   const [threads, setThreads] = useState([]);
@@ -10,14 +10,14 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const t = await api.get('/threads');
+        const t = await axioInstance.get('api/threads');
         setThreads(t.data);
       } catch (err) {
         console.log('Threads error:', err.message);
       }
 
       try {
-        const u = await api.get('/users');
+        const u = await axioInstance.get('api/users');
         setUsers(u.data);
       } catch (err) {
         console.log('Users error:', err.message);
@@ -69,7 +69,7 @@ const AdminDashboard = () => {
               <div key={t._id} className="admin-list-item">
                 <span className="admin-rank">#{i + 1}</span>
                 <span>{t.title}</span>
-                <span className="admin-meta">Likes {t.likes}</span>
+                <span className="admin-meta">Likes</span>
               </div>
             ))
             }

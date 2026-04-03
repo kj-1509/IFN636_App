@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
-import api from '../../axiosConfig';
+import axioInstance from '../../axiosConfig';
 
 const TOPICS = ['All','Tech','Culture','Science','Gaming','Sports','Other'];
 
@@ -16,7 +16,7 @@ const AdminThreads = () => {
     setIsLoading(true);
     setError('');
     try {
-      const res = await api.get('/threads');
+      const res = await axioInstance.get('api/threads');
       setThreads(res.data || []);
     } catch (err) {
       setError(err?.response?.data?.message || err.message || 'Failed to load threads');
@@ -32,7 +32,7 @@ const AdminThreads = () => {
 
     try {
       setDeletingIds((prev) => [...prev, id]);
-      await api.delete(`/threads/${id}`);
+      await axioInstance.delete(`/api/threads/${id}`);
       setMessage('Thread deleted successfully');
       fetchThreads();
     } catch (err) {
