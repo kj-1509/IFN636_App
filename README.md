@@ -78,3 +78,6 @@ password: Admin1234
 User -
 email: teste@email.com
 password: Password123
+
+# Public URL
+http://15.135.76.82/
