@@ -37,7 +37,7 @@ const loginUser = async (req, res) => {
     if (!process.env.JWT_SECRET) {
       return res.status(500).json({ message: 'JWT_SECRET not configured' });
     }
-
+//test
     
     const token = jwt.sign(
       { id: user._id, role: user.role },
