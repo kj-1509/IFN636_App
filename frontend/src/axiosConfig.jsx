@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  //baseURL: 'http://localhost:5001', // locals
+  //baseURL: 'http://localhost:5001', // local
   baseURL: 'http://52.64.252.131', // live
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': '/api/application/json' },
 });
 
 axiosInstance.interceptors.request.use((config) => {
