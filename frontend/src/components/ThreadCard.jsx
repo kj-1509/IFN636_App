@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axiosInstance from '../axiosConfig';
 
@@ -18,16 +18,24 @@ const ThreadCard = ({ thread, onRefresh }) => {
 
   const handleDelete = async (threadId) => {
     if (window.confirm('Delete this post?')) {
-      await axiosInstance.delete(`/api/threads/${threadId}`);
-      onRefresh();
+      try {
+        await axiosInstance.delete(`/api/threads/${threadId}`);
+        onRefresh();
+      } catch (err) {
+        alert(err?.response?.data?.error || 'Failed to delete post');
+      }
     }
   };
 
   const handleEdit = async (e) => {
     e.preventDefault();
-    await axiosInstance.put(`/api/threads/${thread._id}`, editForm);
-    setEditing(false);
-    onRefresh();
+    try {
+      await axiosInstance.put(`/api/threads/${thread._id}`, editForm);
+      setEditing(false);
+      onRefresh();
+    } catch (err) {
+      alert(err?.response?.data?.error || 'Failed to update post');
+    }
   };
 
   const topicColour = TOPIC_COLOURS[thread.topic] || '#ccc';
@@ -62,9 +70,6 @@ const ThreadCard = ({ thread, onRefresh }) => {
         <>
           <h3 className="thread-title">{thread.title}</h3>
           <p className="thread-content">{thread.content}</p>
-          <span className="thread-topic" style={{ backgroundColor: topicColour }}>
-            {thread.topic}
-          </span>
         </>
       )}
 
