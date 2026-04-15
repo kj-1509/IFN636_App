@@ -15,10 +15,8 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/threads', require('./routes/threadRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 
-// Export the app object for testing
 if (require.main === module) {
     connectDB();
-    // If the file is run directly, start the server
     const PORT = process.env.PORT || 5001;
     app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   }
